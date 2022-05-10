@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
-import { FirstLvl } from './scenes/firstLvl';
+import  FirstLvl  from './scenes/FirstLvl';
 // import { Gameover } from './scenes/gameover';
 
 const config = {
     type: Phaser.AUTO,
     parent: 'phaser-example',
     mort: false,
-    width: 800,
-    height: 640,
+    width: 1200,
+    height: 850,
     pixelArt: true,
     physics: {
         default: 'arcade',
@@ -19,4 +19,4 @@ const config = {
     scene: FirstLvl
 };
 
-const game = new Phaser.Game(config);
+new Phaser.Game(config);

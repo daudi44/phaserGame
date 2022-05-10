@@ -3,16 +3,15 @@ import tileImg from '../assets/terrainTiles.png';
 import mapJson from '../assets/terrain.json';
 import dudeImg from '../assets/dude.png';
 
-export class FirstLvl extends Phaser.Scene
-{
-    
+var player;
+var cursors;
+var terra;
+var dieLayer;
+class FirstLvl extends Phaser.Scene
+{    
     constructor ()
     {
-        super({key: 'firstlvl'});
-        var player;
-        var cursors;
-        var terra;
-        var dieLayer;
+        super('FirstLvl');
     }
 
     preload ()
@@ -24,6 +23,9 @@ export class FirstLvl extends Phaser.Scene
       
     create ()
     {
+        //DECLARO ELS LIMITS DE LA CAMARA
+        this.cameras.main.setBounds(0, 0, 800, 640);
+
         //CREACIÓ DEL MAPA
         const mapa = this.make.tilemap({key: "def_map", tileHeight: 64, tileWidth: 64});
         const tileset = mapa.addTilesetImage('Terrain (32x32)','tiles');
@@ -37,12 +39,15 @@ export class FirstLvl extends Phaser.Scene
         this.player.setCollideWorldBounds(true);
         this.player.setScale(.5);
 
+        //DECLARO LES COLISIONS DEL TERRA I DE LO QUE TE MATA
         mapa.setCollisionBetween(0, 800, true, true, "ground");
         mapa.setCollisionBetween(0, 800, true, true, "die");
         this.physics.add.collider(this.player, this.terra);
-        this.physics.add.collider(this.player, this.dieLayer, function(){
-            this.scene.start('firstlvl');
-        });
+        this.physics.add.collider(this.player, this.dieLayer, this.setMort, null, this);
+
+        //DECLARO ELS PARAMETRES DE LA CAMARA
+        this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
+        this.cameras.main.setZoom(2.5);
 
         this.anims.create({
             key: 'left',
@@ -65,11 +70,9 @@ export class FirstLvl extends Phaser.Scene
         });
 
         this.cursors = this.input.keyboard.createCursorKeys();
-
     }
     update()
     {
-
         if (this.cursors.left.isDown)
         {
             this.player.setVelocityX(-160);
@@ -88,10 +91,14 @@ export class FirstLvl extends Phaser.Scene
 
             this.player.anims.play('turn');
         }
-
         if (this.cursors.up.isDown && this.player.body.onFloor())
         {
             this.player.setVelocityY(-200);
         }
     }
+    setMort(){
+        this.scene.start('FirstLvl');
+    }
 }
+
+export default FirstLvl;
