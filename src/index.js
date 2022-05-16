@@ -12,8 +12,8 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
-            debug: true
+            gravity: { y: 450 },
+            debug: false
         }
     },
     scene: FirstLvl

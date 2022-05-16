@@ -1,12 +1,23 @@
 import Phaser from 'phaser';
 import tileImg from '../assets/terrainTiles.png';
 import mapJson from '../assets/terrain.json';
-import dudeImg from '../assets/dude.png';
+import dude from '../assets/playerGB.png';
+import coinImg from '../assets/coin3_16x16.png';
+import spikesLarge from '../assets/SpikesLarge.png';
+import spikesShort from '../assets/SpikesShort.png';
+import door from '../assets/door.png';
 
 var player;
 var cursors;
 var terra;
 var dieLayer;
+var score = 0;
+var dobeljump = 0;
+var scoreText;
+var coins;
+var numMoneda = 1;
+
+
 class FirstLvl extends Phaser.Scene
 {    
     constructor ()
@@ -16,13 +27,20 @@ class FirstLvl extends Phaser.Scene
 
     preload ()
     {
-        this.load.spritesheet('dude', dudeImg, { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('dude', dude, { frameWidth: 16, frameHeight: 17 });
         this.load.image('tiles',tileImg);
+        this.load.image('spikes',spikesLarge);
+        this.load.image('spikesShort',spikesShort);
+        this.load.image('door',door);
+        this.load.spritesheet('coin',coinImg, { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('def_map',mapJson);
     }
       
     create ()
     {
+        this.numMoneda = 2;
+        this.score = 0;
+        this.dobeljump = 0;
         //DECLARO ELS LIMITS DE LA CAMARA
         this.cameras.main.setBounds(0, 0, 800, 640);
 
@@ -37,7 +55,7 @@ class FirstLvl extends Phaser.Scene
         this.player = this.physics.add.sprite(100, 550, 'dude');
         this.player.setBounce(0);
         this.player.setCollideWorldBounds(true);
-        this.player.setScale(.5);
+        this.player.setScale(1.2);
 
         //DECLARO LES COLISIONS DEL TERRA I DE LO QUE TE MATA
         mapa.setCollisionBetween(0, 800, true, true, "ground");
@@ -48,42 +66,179 @@ class FirstLvl extends Phaser.Scene
         //DECLARO ELS PARAMETRES DE LA CAMARA
         this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
         this.cameras.main.setZoom(2.5);
+        // this.cameras.main.setZoom(1.1);
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('dude', { start: 3, end: 8 }),
+            frameRate: 5,
             repeat: -1
         });
-
+    
         this.anims.create({
             key: 'turn',
-            frames: [ { key: 'dude', frame: 4 } ],
+            frames: [ { key: 'dude', frame: 0 } ],
             frameRate: 20
+        });
+    
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 3, end: 8 }),
+            frameRate: 5,
+            repeat: -1
         });
 
         this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            key: 'jumpy',
+            frames: [ { key: 'dude', frame: 1 } ],
+            frameRate: 5,
+            repeat: 0
+        });
+
+        //AFEGEIXO EL SCORE TEXT DALT A LA DRETA
+        // this.scoreText = this.add.text(16, 300, 'score: 0', { fontSize: '16px', fill: '#000' }).setScrollFactor(0);
+        this.scoreText = this.add.text(0,0).setText('Score: 0').setScrollFactor(0,0);
+
+        //AFEGIR QUE ES DETECTE L'ENTRADA DE LES FLETXES DEL TECLAT
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        //DECLARO LES MONEDES
+        this.anims.create({
+            key: 'flip',
+            frames: this.anims.generateFrameNumbers('coin', {start: 0, end: 13}),
             frameRate: 10,
             repeat: -1
         });
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+        this.coins = this.physics.add.group({
+            key: 'coin',
+            setXY:{x:1000,y:1000}
+        });
+
+        for(var i = 0; i < 14; i++){
+            switch(i){
+                case 0:
+                    var moneda1 = this.coins.create(300,550)
+                    moneda1.body.setAllowGravity(false)
+                    moneda1.anims.play('flip', true)
+                case 1:
+                    var moneda2 = this.coins.create(590,430)
+                    moneda2.body.setAllowGravity(false)
+                    moneda2.anims.play('flip', true)
+                case 2:
+                    var moneda3 = this.coins.create(368,400)
+                    moneda3.body.setAllowGravity(false)
+                    moneda3.anims.play('flip', true)
+                case 3:
+                    var moneda4 = this.coins.create(240,350)
+                    moneda4.body.setAllowGravity(false)
+                    moneda4.anims.play('flip', true)
+                case 4:
+                    var moneda5 = this.coins.create(192,415)
+                    moneda5.body.setAllowGravity(false)
+                    moneda5.anims.play('flip', true)
+                case 5:
+                    var moneda6 = this.coins.create(79,330)
+                    moneda6.body.setAllowGravity(false)
+                    moneda6.anims.play('flip', true)
+                case 6:
+                    var moneda7 = this.coins.create(287,260)
+                    moneda7.body.setAllowGravity(false)
+                    moneda7.anims.play('flip', true)
+                case 7:
+                    var moneda8 = this.coins.create(496,260)
+                    moneda8.body.setAllowGravity(false)
+                    moneda8.anims.play('flip', true)
+                case 8:
+                    var moneda9 = this.coins.create(400,150)
+                    moneda9.body.setAllowGravity(false)
+                    moneda9.anims.play('flip', true)
+                case 9:
+                    var moneda10 = this.coins.create(200,150)
+                    moneda10.body.setAllowGravity(false)
+                    moneda10.anims.play('flip', true)
+                case 10:
+                    var moneda11 = this.coins.create(255,50)
+                    moneda11.body.setAllowGravity(false)
+                    moneda11.anims.play('flip', true)
+                case 11:
+                    var moneda11 = this.coins.create(485,50)
+                    moneda11.body.setAllowGravity(false)
+                    moneda11.anims.play('flip', true)
+                
+            }
+            break;
+        }
+        this.physics.add.overlap(this.player, this.coins, this.takeCoin, null, this);
+
+        //APARTAT SPAGHETTI CODE :)
+        //SPIKES ALTS
+        var spikes1 = this.physics.add.sprite(200, 190, 'spikes');
+        spikes1.setScale(0.03);
+        this.physics.add.collider(spikes1, this.terra);
+        this.physics.add.overlap(this.player, spikes1, this.setMort, null, this);
+        var spikes2 = this.physics.add.sprite(400, 190, 'spikes');
+        spikes2.setScale(0.03);
+        this.physics.add.collider(spikes2, this.terra);
+        this.physics.add.overlap(this.player, spikes2, this.setMort, null, this);
+
+        //SPIKES BAIXOS
+        var spikesShort1 = this.physics.add.sprite(200, 100, 'spikesShort');
+        spikesShort1.setScale(0.03);
+        this.physics.add.collider(spikesShort1, this.terra);
+        this.physics.add.overlap(this.player, spikesShort1, this.setMort, null, this);
+        var spikesShort2 = this.physics.add.sprite(235, 100, 'spikesShort');
+        spikesShort2.setScale(0.03);
+        this.physics.add.collider(spikesShort2, this.terra);
+        this.physics.add.overlap(this.player, spikesShort2, this.setMort, null, this);
+        var spikesShort3 = this.physics.add.sprite(270, 100, 'spikesShort');
+        spikesShort3.setScale(0.03);
+        this.physics.add.collider(spikesShort3, this.terra);
+        this.physics.add.overlap(this.player, spikesShort3, this.setMort, null, this);
+        var spikesShort4 = this.physics.add.sprite(305, 100, 'spikesShort');
+        spikesShort4.setScale(0.03);
+        this.physics.add.collider(spikesShort4, this.terra);
+        this.physics.add.overlap(this.player, spikesShort4, this.setMort, null, this);
+
+
+        var spikesShort6 = this.physics.add.sprite(430, 100, 'spikesShort');
+        spikesShort6.setScale(0.03);
+        this.physics.add.collider(spikesShort6, this.terra);
+        this.physics.add.overlap(this.player, spikesShort6, this.setMort, null, this);
+        var spikesShort7 = this.physics.add.sprite(465, 100, 'spikesShort');
+        spikesShort7.setScale(0.03);
+        this.physics.add.collider(spikesShort7, this.terra);
+        this.physics.add.overlap(this.player, spikesShort7, this.setMort, null, this);
+        var spikesShort8 = this.physics.add.sprite(500, 100, 'spikesShort');
+        spikesShort8.setScale(0.03);
+        this.physics.add.collider(spikesShort8, this.terra);
+        this.physics.add.overlap(this.player, spikesShort8, this.setMort, null, this);
+        var spikesShort9 = this.physics.add.sprite(535, 100, 'spikesShort');
+        spikesShort9.setScale(0.03);
+        this.physics.add.collider(spikesShort9, this.terra);
+        this.physics.add.overlap(this.player, spikesShort9, this.setMort, null, this);
+        
+        //CREO LA PORTA PER PASSAR AL SEGÜENT LVL
+        var door = this.physics.add.sprite(750,60,'door');
+        door.setScale(0.1);
+        this.physics.add.collider(door, this.terra);
+        this.physics.add.overlap(this.player, door, this.setMort, null, this);
     }
     update()
     {
         if (this.cursors.left.isDown)
         {
-            this.player.setVelocityX(-160);
+            this.player.setVelocityX(-160).setFlipX(true);
 
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown)
         {
-            this.player.setVelocityX(160);
+            this.player.setVelocityX(160).setFlipX(false);
 
-            this.player.anims.play('right', true);
+            if(this.cursors.up.isUp){
+                this.player.anims.play('right', true);
+            }
         }
         else
         {
@@ -91,13 +246,28 @@ class FirstLvl extends Phaser.Scene
 
             this.player.anims.play('turn');
         }
-        if (this.cursors.up.isDown && this.player.body.onFloor())
+        if (this.cursors.up.isDown)
         {
-            this.player.setVelocityY(-200);
+            if(this.dobeljump < 1){
+                if(this.player.body.velocity.y >= 0){
+                    this.player.setVelocityY(-200);
+                    this.dobeljump += 1;
+                }
+            }
+        }
+        if(this.player.body.onFloor()){
+            this.dobeljump = 0;
+        }else{
+            this.player.anims.play('jumpy', true);
         }
     }
     setMort(){
         this.scene.start('FirstLvl');
+    }
+    takeCoin(player, coin){
+        this.score += 10;
+        coin.disableBody(true, true);
+        console.log(this.score)
     }
 }
 
