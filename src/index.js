@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
-import  FirstLvl  from './scenes/FirstLvl';
-// import { Gameover } from './scenes/gameover';
+import FirstLvl  from './scenes/FirstLvl';
+import gg from './scenes/gg';
+import gameover from './scenes/gameover';
+import SecondLvl from './scenes/SecondLvl';
 
 const config = {
     type: Phaser.AUTO,
@@ -16,7 +18,8 @@ const config = {
             debug: false
         }
     },
-    scene: FirstLvl
+    scene: [FirstLvl, gg, gameover, SecondLvl]
+    // scene: FirstLvl
 };
 
 new Phaser.Game(config);

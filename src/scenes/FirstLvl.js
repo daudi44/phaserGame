@@ -6,16 +6,18 @@ import coinImg from '../assets/coin3_16x16.png';
 import spikesLarge from '../assets/SpikesLarge.png';
 import spikesShort from '../assets/SpikesShort.png';
 import door from '../assets/door.png';
+import heart from '../assets/heart.png';
 
 var player;
 var cursors;
 var terra;
 var dieLayer;
-var score = 0;
+var score;
 var dobeljump = 0;
 var scoreText;
 var coins;
-var numMoneda = 1;
+var vides = 3;
+var hearts;
 
 
 class FirstLvl extends Phaser.Scene
@@ -32,15 +34,18 @@ class FirstLvl extends Phaser.Scene
         this.load.image('spikes',spikesLarge);
         this.load.image('spikesShort',spikesShort);
         this.load.image('door',door);
+        this.load.image('heart',heart);
         this.load.spritesheet('coin',coinImg, { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('def_map',mapJson);
     }
       
-    create ()
+    create (data)
     {
-        this.numMoneda = 2;
-        this.score = 0;
+        this.vides = data.vides || 3;
+        this.score = data.score || 0;
+
         this.dobeljump = 0;
+
         //DECLARO ELS LIMITS DE LA CAMARA
         this.cameras.main.setBounds(0, 0, 800, 640);
 
@@ -52,10 +57,21 @@ class FirstLvl extends Phaser.Scene
         this.dieLayer = mapa.createLayer("die",tileset,0,0);
         
         //JUGADOR I TAL
-        this.player = this.physics.add.sprite(100, 550, 'dude');
+        this.player = this.physics.add.sprite(100, 600, 'dude');
         this.player.setBounce(0);
         this.player.setCollideWorldBounds(true);
         this.player.setScale(1.2);
+
+        //VIDES RESTANTS 
+        this.hearts = this.physics.add.group({
+            key: 'heart',
+            repeat: this.vides-1,
+            setXY: {x: 760, y:270, stepX:20}
+        });
+        this.hearts.children.iterate(function(child){
+            child.body.setAllowGravity(false);
+            child.setScrollFactor(0);
+        });
 
         //DECLARO LES COLISIONS DEL TERRA I DE LO QUE TE MATA
         mapa.setCollisionBetween(0, 800, true, true, "ground");
@@ -66,7 +82,6 @@ class FirstLvl extends Phaser.Scene
         //DECLARO ELS PARAMETRES DE LA CAMARA
         this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
         this.cameras.main.setZoom(2.5);
-        // this.cameras.main.setZoom(1.1);
 
         this.anims.create({
             key: 'left',
@@ -96,8 +111,7 @@ class FirstLvl extends Phaser.Scene
         });
 
         //AFEGEIXO EL SCORE TEXT DALT A LA DRETA
-        // this.scoreText = this.add.text(16, 300, 'score: 0', { fontSize: '16px', fill: '#000' }).setScrollFactor(0);
-        this.scoreText = this.add.text(0,0).setText('Score: 0').setScrollFactor(0,0);
+        this.scoreText = this.add.text(380,260).setText('Score: '+this.score).setScrollFactor(0);
 
         //AFEGIR QUE ES DETECTE L'ENTRADA DE LES FLETXES DEL TECLAT
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -195,11 +209,6 @@ class FirstLvl extends Phaser.Scene
         spikesShort3.setScale(0.03);
         this.physics.add.collider(spikesShort3, this.terra);
         this.physics.add.overlap(this.player, spikesShort3, this.setMort, null, this);
-        var spikesShort4 = this.physics.add.sprite(305, 100, 'spikesShort');
-        spikesShort4.setScale(0.03);
-        this.physics.add.collider(spikesShort4, this.terra);
-        this.physics.add.overlap(this.player, spikesShort4, this.setMort, null, this);
-
 
         var spikesShort6 = this.physics.add.sprite(430, 100, 'spikesShort');
         spikesShort6.setScale(0.03);
@@ -213,16 +222,14 @@ class FirstLvl extends Phaser.Scene
         spikesShort8.setScale(0.03);
         this.physics.add.collider(spikesShort8, this.terra);
         this.physics.add.overlap(this.player, spikesShort8, this.setMort, null, this);
-        var spikesShort9 = this.physics.add.sprite(535, 100, 'spikesShort');
-        spikesShort9.setScale(0.03);
-        this.physics.add.collider(spikesShort9, this.terra);
-        this.physics.add.overlap(this.player, spikesShort9, this.setMort, null, this);
         
         //CREO LA PORTA PER PASSAR AL SEGÜENT LVL
-        var door = this.physics.add.sprite(750,60,'door');
+        // var door = this.physics.add.sprite(750,60,'door');
+        var door = this.physics.add.sprite(200,550,'door');
         door.setScale(0.1);
         this.physics.add.collider(door, this.terra);
-        this.physics.add.overlap(this.player, door, this.setMort, null, this);
+        this.physics.add.overlap(this.player, door, this.secondLvl, null, this);
+
     }
     update()
     {
@@ -262,12 +269,29 @@ class FirstLvl extends Phaser.Scene
         }
     }
     setMort(){
-        this.scene.start('FirstLvl');
+        if(this.vides-1 === 0){
+            this.score = 0;
+            this.gameover();
+        }else{
+            this.score -= 50;
+            this.scene.restart({score: this.score, vides: this.vides-1});
+        }
     }
-    takeCoin(player, coin){
+    gameover()
+    {
+        this.scene.start('gameover', {score: this.score, vides: this.vides-1});         
+    }
+    secondLvl(){               
+        this.scene.start('SecondLvl', {score: this.score, vides: this.vides});   
+    }
+    congratulations()
+    {
+        this.scene.start('gg', {score: this.score, vides: this.vides-1});        
+    }
+    takeCoin(player,coin){
         this.score += 10;
         coin.disableBody(true, true);
-        console.log(this.score)
+        this.scoreText.setText('Score: '+ this.score);
     }
 }
 
