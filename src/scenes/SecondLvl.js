@@ -115,6 +115,12 @@ class SecondLvl extends Phaser.Scene
         //AFEGEIXO EL SCORE TEXT DALT A LA DRETA
         this.scoreText = this.add.text(380,260).setText('Score: '+this.score).setScrollFactor(0);
 
+        //CREO LA PORTA DEL FINAL DEL JOC
+        var door2 = this.physics.add.sprite(750,60,'door');
+        door2.setScale(0.1);
+        this.physics.add.collider(door2, this.terra2);
+        this.physics.add.overlap(this.player2, door2, this.congratulations, null, this);
+
     }
     update()
     {
@@ -155,11 +161,11 @@ class SecondLvl extends Phaser.Scene
     }
     setMort()
     {
+        this.score -= 50;
         if(this.vides-1 === 0){
-            this.score = 0;
             this.gameover();
+            this.score = 0;
         }else{
-            this.score -= 50;
             this.scene.restart({score: this.score, vides: this.vides-1});
         }
     }
@@ -168,9 +174,13 @@ class SecondLvl extends Phaser.Scene
         this.score += 10;
         coin.disableBody(true,true);
     }
+    congratulations()
+    {
+        this.scene.start('gg', {score: this.score, vides: this.vides-1});        
+    }
     gameover()
     {
-        this.scene.start('gameover', {score: this.score, vides: this.vides-1});         
+        this.scene.start('gameover',{score: this.score, vides: this.vides-1});         
     }
 }
 export default SecondLvl;

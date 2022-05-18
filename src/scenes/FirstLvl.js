@@ -224,8 +224,7 @@ class FirstLvl extends Phaser.Scene
         this.physics.add.overlap(this.player, spikesShort8, this.setMort, null, this);
         
         //CREO LA PORTA PER PASSAR AL SEGÜENT LVL
-        // var door = this.physics.add.sprite(750,60,'door');
-        var door = this.physics.add.sprite(200,550,'door');
+        var door = this.physics.add.sprite(750,60,'door');
         door.setScale(0.1);
         this.physics.add.collider(door, this.terra);
         this.physics.add.overlap(this.player, door, this.secondLvl, null, this);
@@ -269,11 +268,11 @@ class FirstLvl extends Phaser.Scene
         }
     }
     setMort(){
+        this.score -= 50;
         if(this.vides-1 === 0){
-            this.score = 0;
             this.gameover();
+            this.score = 0;
         }else{
-            this.score -= 50;
             this.scene.restart({score: this.score, vides: this.vides-1});
         }
     }
@@ -283,10 +282,6 @@ class FirstLvl extends Phaser.Scene
     }
     secondLvl(){               
         this.scene.start('SecondLvl', {score: this.score, vides: this.vides});   
-    }
-    congratulations()
-    {
-        this.scene.start('gg', {score: this.score, vides: this.vides-1});        
     }
     takeCoin(player,coin){
         this.score += 10;

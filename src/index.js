@@ -3,6 +3,7 @@ import FirstLvl  from './scenes/FirstLvl';
 import gg from './scenes/gg';
 import gameover from './scenes/gameover';
 import SecondLvl from './scenes/SecondLvl';
+import menu from './scenes/menu';
 
 const config = {
     type: Phaser.AUTO,
@@ -18,7 +19,7 @@ const config = {
             debug: false
         }
     },
-    scene: [FirstLvl, gg, gameover, SecondLvl]
+    scene: [menu,FirstLvl, gg, gameover, SecondLvl]
     // scene: FirstLvl
 };
 

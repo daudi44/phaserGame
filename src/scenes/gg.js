@@ -25,7 +25,7 @@ export default class gg extends Phaser.Scene
         this.restartButton = this.add.sprite(600,775,'reload').setInteractive();
         this.restartButton.setScale(0.25);
         this.restartButton.on('pointerdown', () => {
-            this.scene.start('FirstLvl');
+            this.scene.start('menu');
         });
     }
 }
