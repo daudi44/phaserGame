@@ -35,8 +35,8 @@ class SecondLvl extends Phaser.Scene
         this.load.image('spikes',spikesLarge);
         this.load.image('door',door);
         this.load.image('heart',heart);
-        this.load.audio('musicLvl2', ["/src/assets/lvl2.mp3"]);
-        this.load.audio('coinSound', ["/src/assets/coinSound.mp3"]);
+        this.load.audio('musicLvl2', ["/assets/lvl2.mp3"]);
+        this.load.audio('coinSound', ["/assets/coinSound.mp3"]);
         this.load.spritesheet('coin2',coinImg, { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('def_map2',mapJson2);
 

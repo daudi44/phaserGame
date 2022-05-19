@@ -15,7 +15,7 @@ export default class Gameover extends Phaser.Scene {
     this.load.image('reload',restart);
     this.load.image('background', background);
     this.load.image('gameover', gameover);
-    this.load.audio('lose', ["/src/assets/lose.mp3"]);
+    this.load.audio('lose', ["/assets/lose.mp3"]);
   }
   
   create(data) {

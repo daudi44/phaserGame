@@ -38,8 +38,8 @@ class FirstLvl extends Phaser.Scene
         this.load.image('spikesShort',spikesShort);
         this.load.image('door',door);
         this.load.image('heart',heart);
-        this.load.audio('musicLvl1', ["/src/assets/lvl1.mp3"]);
-        this.load.audio('coinSound', ["/src/assets/coinSound.mp3"]);
+        this.load.audio('musicLvl1', ["/assets/lvl1.mp3"]);
+        this.load.audio('coinSound', ["/assets/coinSound.mp3"]);
         this.load.spritesheet('coin',coinImg, { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('def_map',mapJson);
     }

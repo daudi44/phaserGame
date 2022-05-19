@@ -21,7 +21,7 @@ export default class menu extends Phaser.Scene
         this.load.image('start',start);
         this.load.image('github',github);
         this.load.image('jumpyalien',jumpyalien);
-        this.load.audio('music', ["/src/assets/menu.mp3"]);
+        this.load.audio('music', ["/assets/menu.mp3"]);
     }
     create()
     {

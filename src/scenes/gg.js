@@ -18,7 +18,7 @@ export default class gg extends Phaser.Scene
         this.load.image('congrats', congratulations);
         this.load.image('background', background);
         this.load.image('reload',restart);
-        this.load.audio('musicGG', ["/src/assets/win.mp3"]);
+        this.load.audio('musicGG', ["/assets/win.mp3"]);
     }
     create(data)
     {
