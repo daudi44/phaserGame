@@ -18,6 +18,9 @@ var scoreText;
 var coins;
 var vides = 3;
 var hearts;
+var musicaLvl1;
+var coinSound;
+var musicasiono;
 
 
 class FirstLvl extends Phaser.Scene
@@ -35,12 +38,20 @@ class FirstLvl extends Phaser.Scene
         this.load.image('spikesShort',spikesShort);
         this.load.image('door',door);
         this.load.image('heart',heart);
+        this.load.audio('musicLvl1', ["/src/assets/lvl1.mp3"]);
+        this.load.audio('coinSound', ["/src/assets/coinSound.mp3"]);
         this.load.spritesheet('coin',coinImg, { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('def_map',mapJson);
     }
       
     create (data)
     {
+        this.musicaLvl1 = this.sound.add('musicLvl1', {loop: true, volume: 0.5});
+
+        this.musicaLvl1.play();
+
+        this.coinSound = this.sound.add('coinSound', {loop:false});
+
         this.vides = data.vides || 3;
         this.score = data.score || 0;
 
@@ -269,21 +280,25 @@ class FirstLvl extends Phaser.Scene
     }
     setMort(){
         this.score -= 50;
+        this.musicaLvl1.pause();
         if(this.vides-1 === 0){
             this.gameover();
-            this.score = 0;
         }else{
             this.scene.restart({score: this.score, vides: this.vides-1});
         }
+
     }
     gameover()
     {
-        this.scene.start('gameover', {score: this.score, vides: this.vides-1});         
+        // this.musicaLvl1.stop();
+        this.scene.start('gameover', {score: this.score, vides: this.vides-1});  
     }
     secondLvl(){               
+        this.musicaLvl1.stop();
         this.scene.start('SecondLvl', {score: this.score, vides: this.vides});   
     }
     takeCoin(player,coin){
+        this.coinSound.play();
         this.score += 10;
         coin.disableBody(true, true);
         this.scoreText.setText('Score: '+ this.score);

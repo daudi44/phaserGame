@@ -20,7 +20,6 @@ const config = {
         }
     },
     scene: [menu,FirstLvl, gg, gameover, SecondLvl]
-    // scene: FirstLvl
 };
 
 new Phaser.Game(config);

@@ -7,6 +7,7 @@ import jumpyalien from "../assets/jumpyalien.png";
 var startVal;
 var githubVal;
 var jumpyalienVal;
+var musica;
 
 export default class menu extends Phaser.Scene
 {
@@ -20,9 +21,13 @@ export default class menu extends Phaser.Scene
         this.load.image('start',start);
         this.load.image('github',github);
         this.load.image('jumpyalien',jumpyalien);
+        this.load.audio('music', ["/src/assets/menu.mp3"]);
     }
     create()
     {
+        this.musica = this.sound.add('music', {loop: true});
+        this.musica.play();
+
         var background = this.add.image(600,425,'background');
 
         this.jumpyalienVal = this.add.sprite(600,200,'jumpyalien');
@@ -31,6 +36,7 @@ export default class menu extends Phaser.Scene
         this.startVal = this.add.sprite(600,430,'start').setInteractive();
         this.startVal.setScale(0.75);
         this.startVal.on('pointerdown', () => {
+            this.musica.stop();
             this.scene.start('FirstLvl');
         });
 
